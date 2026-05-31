@@ -24,29 +24,27 @@ public class MedicinesPanel extends JPanel {
     }
 
     private void initUI() {
-        setLayout(new BorderLayout(0, 18));
+        setLayout(new BorderLayout(0, 15));
         setBackground(UITheme.BACKGROUND);
 
-        JPanel topBar = UITheme.createCard(null);
-        topBar.setLayout(new BorderLayout(18, 0));
-        topBar.add(UITheme.createSectionHeader("Medicines", "Monitor inventory, prices, quantities, and expiry dates."), BorderLayout.WEST);
+        JPanel topBar = new JPanel(new BorderLayout(10, 0));
+        topBar.setBackground(UITheme.BACKGROUND);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        searchPanel.setOpaque(false);
+        searchPanel.setBackground(UITheme.BACKGROUND);
         searchField = UITheme.createTextField();
-        searchField.setPreferredSize(new Dimension(260, 38));
+        searchField.setPreferredSize(new Dimension(260, 36));
         JButton searchBtn = UITheme.createPrimaryButton("Search");
-        searchBtn.setPreferredSize(new Dimension(92, 38));
+        searchBtn.setPreferredSize(new Dimension(90, 36));
         searchPanel.add(searchField);
         searchPanel.add(Box.createHorizontalStrut(8));
         searchPanel.add(searchBtn);
 
         JButton addBtn = UITheme.createSuccessButton("+ Add Medicine");
-        addBtn.setPreferredSize(new Dimension(148, 38));
-        searchPanel.add(Box.createHorizontalStrut(12));
-        searchPanel.add(addBtn);
+        addBtn.setPreferredSize(new Dimension(140, 36));
 
-        topBar.add(searchPanel, BorderLayout.EAST);
+        topBar.add(searchPanel, BorderLayout.WEST);
+        topBar.add(addBtn, BorderLayout.EAST);
 
         String[] cols = {"ID", "Name", "Category", "Manufacturer", "Price (Rs)", "Quantity", "Expiry Date", "Description"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -65,13 +63,14 @@ public class MedicinesPanel extends JPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        UITheme.styleScrollPane(scrollPane);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
+        scrollPane.getViewport().setBackground(Color.WHITE);
 
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         btnRow.setBackground(UITheme.BACKGROUND);
-        JButton editBtn = UITheme.createPrimaryButton("Edit");
-        JButton deleteBtn = UITheme.createDangerButton("Delete");
-        JButton refreshBtn = UITheme.createAccentButton("Refresh");
+        JButton editBtn = UITheme.createPrimaryButton("✏ Edit");
+        JButton deleteBtn = UITheme.createDangerButton("🗑 Delete");
+        JButton refreshBtn = UITheme.createSuccessButton("↺ Refresh");
         editBtn.setPreferredSize(new Dimension(100, 34));
         deleteBtn.setPreferredSize(new Dimension(100, 34));
         refreshBtn.setPreferredSize(new Dimension(100, 34));

@@ -25,8 +25,8 @@ public class PatientDialog extends JDialog {
         setLocationRelativeTo(getOwner());
         setResizable(false);
 
-        JPanel main = UITheme.createCard(null);
-        main.setLayout(new BorderLayout());
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBackground(Color.WHITE);
         main.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         JLabel title = new JLabel(patient == null ? "Add New Patient" : "Edit Patient");
@@ -35,7 +35,7 @@ public class PatientDialog extends JDialog {
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
 
         JPanel form = new JPanel(new GridBagLayout());
-        form.setOpaque(false);
+        form.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -47,10 +47,10 @@ public class PatientDialog extends JDialog {
         diseaseField = UITheme.createTextField();
 
         genderCombo = new JComboBox<>(new String[]{"Male", "Female", "Other"});
-        UITheme.styleComboBox(genderCombo);
+        genderCombo.setFont(UITheme.FONT_BODY);
 
         bloodGroupCombo = new JComboBox<>(new String[]{"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "Unknown"});
-        UITheme.styleComboBox(bloodGroupCombo);
+        bloodGroupCombo.setFont(UITheme.FONT_BODY);
 
         addRow(form, gbc, 0, "Full Name *", nameField);
         addRow(form, gbc, 1, "Age *", ageField);
@@ -61,7 +61,7 @@ public class PatientDialog extends JDialog {
         addRow(form, gbc, 6, "Disease / Condition", diseaseField);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        btnPanel.setOpaque(false);
+        btnPanel.setBackground(Color.WHITE);
         JButton cancelBtn = UITheme.createDangerButton("Cancel");
         JButton saveBtn = UITheme.createSuccessButton("Save");
         btnPanel.add(cancelBtn);

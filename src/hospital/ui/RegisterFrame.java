@@ -12,7 +12,7 @@ public class RegisterFrame extends JFrame {
     private JTextField fullNameField, usernameField, emailField;
     private JPasswordField passwordField, confirmPasswordField;
     private JLabel errorLabel;
-    private final UserDAO userDAO;
+    private UserDAO userDAO;
 
     public RegisterFrame() {
         userDAO = new UserDAO();
@@ -21,29 +21,26 @@ public class RegisterFrame extends JFrame {
 
     private void initUI() {
         setTitle("HMS - Register");
-        setSize(560, 650);
+        setSize(500, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        JPanel mainPanel = UITheme.createGradientPanel(UITheme.BACKGROUND, new Color(225, 241, 238));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(Color.WHITE);
         mainPanel.setLayout(new GridBagLayout());
 
-        JPanel wrapper = UITheme.createCard(null);
-        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
-        wrapper.setPreferredSize(new Dimension(390, 560));
-
-        JLabel badge = new JLabel("NEW ACCOUNT");
-        badge.setFont(UITheme.FONT_SMALL);
-        badge.setForeground(UITheme.PRIMARY);
-        badge.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel form = new JPanel();
+        form.setBackground(Color.WHITE);
+        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+        form.setPreferredSize(new Dimension(360, 480));
 
         JLabel title = new JLabel("Create Account");
         title.setFont(UITheme.FONT_TITLE);
         title.setForeground(UITheme.TEXT_PRIMARY);
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel subtitle = new JLabel("Register to access the HMS workspace");
+        JLabel subtitle = new JLabel("Register to access the HMS");
         subtitle.setFont(UITheme.FONT_BODY);
         subtitle.setForeground(UITheme.TEXT_MUTED);
         subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -53,18 +50,32 @@ public class RegisterFrame extends JFrame {
         errorLabel.setForeground(UITheme.DANGER);
         errorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        fullNameField = createWideField();
-        usernameField = createWideField();
-        emailField = createWideField();
-        passwordField = createWidePasswordField();
-        confirmPasswordField = createWidePasswordField();
+        fullNameField = UITheme.createTextField();
+        fullNameField.setMaximumSize(new Dimension(360, 36));
+        fullNameField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        usernameField = UITheme.createTextField();
+        usernameField.setMaximumSize(new Dimension(360, 36));
+        usernameField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        emailField = UITheme.createTextField();
+        emailField.setMaximumSize(new Dimension(360, 36));
+        emailField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        passwordField = UITheme.createPasswordField();
+        passwordField.setMaximumSize(new Dimension(360, 36));
+        passwordField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        confirmPasswordField = UITheme.createPasswordField();
+        confirmPasswordField.setMaximumSize(new Dimension(360, 36));
+        confirmPasswordField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JButton registerBtn = UITheme.createSuccessButton("Register");
-        registerBtn.setMaximumSize(new Dimension(340, 42));
+        registerBtn.setMaximumSize(new Dimension(360, 40));
         registerBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        backPanel.setOpaque(false);
+        backPanel.setBackground(Color.WHITE);
         backPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         JLabel alreadyLbl = new JLabel("Already have an account? ");
         alreadyLbl.setFont(UITheme.FONT_BODY);
@@ -74,28 +85,35 @@ public class RegisterFrame extends JFrame {
         loginLink.setForeground(UITheme.PRIMARY);
         loginLink.setBorderPainted(false);
         loginLink.setContentAreaFilled(false);
-        loginLink.setFocusPainted(false);
         loginLink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         backPanel.add(alreadyLbl);
         backPanel.add(loginLink);
 
-        wrapper.add(badge);
-        wrapper.add(Box.createVerticalStrut(8));
+        addFieldRow(form, "Full Name", fullNameField);
+        form.add(Box.createVerticalStrut(10));
+        addFieldRow(form, "Username", usernameField);
+        form.add(Box.createVerticalStrut(10));
+        addFieldRow(form, "Email", emailField);
+        form.add(Box.createVerticalStrut(10));
+        addFieldRow(form, "Password", passwordField);
+        form.add(Box.createVerticalStrut(10));
+        addFieldRow(form, "Confirm Password", confirmPasswordField);
+        form.add(Box.createVerticalStrut(5));
+        form.add(errorLabel);
+        form.add(Box.createVerticalStrut(10));
+        form.add(registerBtn);
+        form.add(Box.createVerticalStrut(15));
+        form.add(backPanel);
+
+        JPanel wrapper = new JPanel();
+        wrapper.setBackground(Color.WHITE);
+        wrapper.setLayout(new BoxLayout(wrapper, BoxLayout.Y_AXIS));
         wrapper.add(title);
         wrapper.add(Box.createVerticalStrut(4));
         wrapper.add(subtitle);
         wrapper.add(Box.createVerticalStrut(20));
-        addFieldRow(wrapper, "Full Name", fullNameField);
-        addFieldRow(wrapper, "Username", usernameField);
-        addFieldRow(wrapper, "Email", emailField);
-        addFieldRow(wrapper, "Password", passwordField);
-        addFieldRow(wrapper, "Confirm Password", confirmPasswordField);
-        wrapper.add(Box.createVerticalStrut(3));
-        wrapper.add(errorLabel);
-        wrapper.add(Box.createVerticalStrut(10));
-        wrapper.add(registerBtn);
-        wrapper.add(Box.createVerticalStrut(15));
-        wrapper.add(backPanel);
+        wrapper.add(form);
+        wrapper.setPreferredSize(new Dimension(360, 520));
 
         mainPanel.add(wrapper);
         add(mainPanel);
@@ -107,27 +125,12 @@ public class RegisterFrame extends JFrame {
         });
     }
 
-    private JTextField createWideField() {
-        JTextField field = UITheme.createTextField();
-        field.setMaximumSize(new Dimension(340, 38));
-        field.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return field;
-    }
-
-    private JPasswordField createWidePasswordField() {
-        JPasswordField field = UITheme.createPasswordField();
-        field.setMaximumSize(new Dimension(340, 38));
-        field.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return field;
-    }
-
     private void addFieldRow(JPanel panel, String label, JComponent field) {
         JLabel lbl = UITheme.createLabel(label);
         lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(lbl);
         panel.add(Box.createVerticalStrut(5));
         panel.add(field);
-        panel.add(Box.createVerticalStrut(10));
     }
 
     private void performRegister() {

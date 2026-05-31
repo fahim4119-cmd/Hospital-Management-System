@@ -24,31 +24,29 @@ public class DoctorsPanel extends JPanel {
     }
 
     private void initUI() {
-        setLayout(new BorderLayout(0, 18));
+        setLayout(new BorderLayout(0, 15));
         setBackground(UITheme.BACKGROUND);
 
         // Top bar
-        JPanel topBar = UITheme.createCard(null);
-        topBar.setLayout(new BorderLayout(18, 0));
-        topBar.add(UITheme.createSectionHeader("Doctors", "Search, add, edit, or remove doctor records."), BorderLayout.WEST);
+        JPanel topBar = new JPanel(new BorderLayout(10, 0));
+        topBar.setBackground(UITheme.BACKGROUND);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        searchPanel.setOpaque(false);
+        searchPanel.setBackground(UITheme.BACKGROUND);
         searchField = UITheme.createTextField();
-        searchField.setPreferredSize(new Dimension(260, 38));
+        searchField.setPreferredSize(new Dimension(260, 36));
         searchField.putClientProperty("JTextField.placeholderText", "Search by name or specialization...");
         JButton searchBtn = UITheme.createPrimaryButton("Search");
-        searchBtn.setPreferredSize(new Dimension(92, 38));
+        searchBtn.setPreferredSize(new Dimension(90, 36));
         searchPanel.add(searchField);
         searchPanel.add(Box.createHorizontalStrut(8));
         searchPanel.add(searchBtn);
 
         JButton addBtn = UITheme.createSuccessButton("+ Add Doctor");
-        addBtn.setPreferredSize(new Dimension(138, 38));
-        searchPanel.add(Box.createHorizontalStrut(12));
-        searchPanel.add(addBtn);
+        addBtn.setPreferredSize(new Dimension(130, 36));
 
-        topBar.add(searchPanel, BorderLayout.EAST);
+        topBar.add(searchPanel, BorderLayout.WEST);
+        topBar.add(addBtn, BorderLayout.EAST);
 
         // Table
         String[] cols = {"ID", "Name", "Specialization", "Phone", "Email", "Qualification", "Gender", "Exp (yrs)"};
@@ -68,14 +66,15 @@ public class DoctorsPanel extends JPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        UITheme.styleScrollPane(scrollPane);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
+        scrollPane.getViewport().setBackground(Color.WHITE);
 
         // Button row
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         btnRow.setBackground(UITheme.BACKGROUND);
-        JButton editBtn = UITheme.createPrimaryButton("Edit");
-        JButton deleteBtn = UITheme.createDangerButton("Delete");
-        JButton refreshBtn = UITheme.createAccentButton("Refresh");
+        JButton editBtn = UITheme.createPrimaryButton("✏ Edit");
+        JButton deleteBtn = UITheme.createDangerButton("🗑 Delete");
+        JButton refreshBtn = UITheme.createSuccessButton("↺ Refresh");
         editBtn.setPreferredSize(new Dimension(100, 34));
         deleteBtn.setPreferredSize(new Dimension(100, 34));
         refreshBtn.setPreferredSize(new Dimension(100, 34));

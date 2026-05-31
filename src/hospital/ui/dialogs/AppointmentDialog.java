@@ -32,8 +32,8 @@ public class AppointmentDialog extends JDialog {
         setLocationRelativeTo(getOwner());
         setResizable(false);
 
-        JPanel main = UITheme.createCard(null);
-        main.setLayout(new BorderLayout());
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBackground(Color.WHITE);
         main.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         JLabel title = new JLabel(appointment == null ? "Schedule New Appointment" : "Edit Appointment");
@@ -42,7 +42,7 @@ public class AppointmentDialog extends JDialog {
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
 
         JPanel form = new JPanel(new GridBagLayout());
-        form.setOpaque(false);
+        form.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -54,11 +54,11 @@ public class AppointmentDialog extends JDialog {
         List<Doctor> doctors = dDAO.getAllDoctors();
 
         patientCombo = new JComboBox<>();
-        UITheme.styleComboBox(patientCombo);
+        patientCombo.setFont(UITheme.FONT_BODY);
         for (Patient p : patients) patientCombo.addItem(p);
 
         doctorCombo = new JComboBox<>();
-        UITheme.styleComboBox(doctorCombo);
+        doctorCombo.setFont(UITheme.FONT_BODY);
         for (Doctor d : doctors) doctorCombo.addItem(d);
 
         dateField = UITheme.createTextField();
@@ -70,7 +70,7 @@ public class AppointmentDialog extends JDialog {
         notesField = UITheme.createTextField();
 
         statusCombo = new JComboBox<>(new String[]{"Pending", "Confirmed", "Completed", "Cancelled"});
-        UITheme.styleComboBox(statusCombo);
+        statusCombo.setFont(UITheme.FONT_BODY);
 
         addRow(form, gbc, 0, "Patient *", patientCombo);
         addRow(form, gbc, 1, "Doctor *", doctorCombo);
@@ -86,7 +86,7 @@ public class AppointmentDialog extends JDialog {
         form.add(hint, gbc);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        btnPanel.setOpaque(false);
+        btnPanel.setBackground(Color.WHITE);
         JButton cancelBtn = UITheme.createDangerButton("Cancel");
         JButton saveBtn = UITheme.createSuccessButton("Save");
         btnPanel.add(cancelBtn);

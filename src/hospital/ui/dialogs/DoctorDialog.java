@@ -25,8 +25,8 @@ public class DoctorDialog extends JDialog {
         setLocationRelativeTo(getOwner());
         setResizable(false);
 
-        JPanel main = UITheme.createCard(null);
-        main.setLayout(new BorderLayout());
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBackground(Color.WHITE);
         main.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         JLabel title = new JLabel(doctor == null ? "Add New Doctor" : "Edit Doctor");
@@ -35,7 +35,7 @@ public class DoctorDialog extends JDialog {
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
 
         JPanel form = new JPanel(new GridBagLayout());
-        form.setOpaque(false);
+        form.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -52,10 +52,10 @@ public class DoctorDialog extends JDialog {
                           "Orthopedic Surgeon", "Pediatrician", "Psychiatrist", "Pulmonologist",
                           "Radiologist", "Surgeon", "Urologist", "Other"};
         specializationCombo = new JComboBox<>(specs);
-        UITheme.styleComboBox(specializationCombo);
+        specializationCombo.setFont(UITheme.FONT_BODY);
 
         genderCombo = new JComboBox<>(new String[]{"Male", "Female", "Other"});
-        UITheme.styleComboBox(genderCombo);
+        genderCombo.setFont(UITheme.FONT_BODY);
 
         addRow(form, gbc, 0, "Full Name *", nameField);
         addRow(form, gbc, 1, "Specialization *", specializationCombo);
@@ -67,7 +67,7 @@ public class DoctorDialog extends JDialog {
 
         // Buttons
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        btnPanel.setOpaque(false);
+        btnPanel.setBackground(Color.WHITE);
         JButton cancelBtn = UITheme.createDangerButton("Cancel");
         JButton saveBtn = UITheme.createSuccessButton("Save");
         btnPanel.add(cancelBtn);
