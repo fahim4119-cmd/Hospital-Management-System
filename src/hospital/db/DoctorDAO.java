@@ -5,7 +5,22 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DoctorDAO {
+public class DoctorDAO extends BaseDAO<Doctor> {
+
+    @Override
+    public List<Doctor> getAll() { return getAllDoctors(); }
+
+    @Override
+    public List<Doctor> search(String keyword) { return searchDoctors(keyword); }
+
+    @Override
+    public boolean add(Doctor entity) { return addDoctor(entity); }
+
+    @Override
+    public boolean update(Doctor entity) { return updateDoctor(entity); }
+
+    @Override
+    public boolean delete(int id) { return deleteDoctor(id); }
 
     public List<Doctor> getAllDoctors() {
         List<Doctor> list = new ArrayList<>();
@@ -50,7 +65,9 @@ public class DoctorDAO {
             ps.setString(5, doctor.getQualification());
             ps.setString(6, doctor.getGender());
             ps.setInt(7, doctor.getExperience());
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("doctors");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Add doctor error: " + e.getMessage());
             return false;
@@ -69,7 +86,9 @@ public class DoctorDAO {
             ps.setString(6, doctor.getGender());
             ps.setInt(7, doctor.getExperience());
             ps.setInt(8, doctor.getId());
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("doctors");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Update doctor error: " + e.getMessage());
             return false;
@@ -81,7 +100,9 @@ public class DoctorDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("doctors");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Delete doctor error: " + e.getMessage());
             return false;

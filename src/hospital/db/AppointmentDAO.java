@@ -5,7 +5,22 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppointmentDAO {
+public class AppointmentDAO extends BaseDAO<Appointment> {
+
+    @Override
+    public List<Appointment> getAll() { return getAllAppointments(); }
+
+    @Override
+    public List<Appointment> search(String keyword) { return searchAppointments(keyword); }
+
+    @Override
+    public boolean add(Appointment entity) { return addAppointment(entity); }
+
+    @Override
+    public boolean update(Appointment entity) { return updateAppointment(entity); }
+
+    @Override
+    public boolean delete(int id) { return deleteAppointment(id); }
 
     public List<Appointment> getAllAppointments() {
         List<Appointment> list = new ArrayList<>();
@@ -53,7 +68,9 @@ public class AppointmentDAO {
             ps.setString(4, appt.getAppointmentTime());
             ps.setString(5, appt.getStatus());
             ps.setString(6, appt.getNotes());
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("appointments");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Add appointment error: " + e.getMessage());
             return false;
@@ -71,7 +88,9 @@ public class AppointmentDAO {
             ps.setString(5, appt.getStatus());
             ps.setString(6, appt.getNotes());
             ps.setInt(7, appt.getId());
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("appointments");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Update appointment error: " + e.getMessage());
             return false;
@@ -83,7 +102,9 @@ public class AppointmentDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("appointments");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Delete appointment error: " + e.getMessage());
             return false;
@@ -108,6 +129,30 @@ public class AppointmentDAO {
             if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) { e.printStackTrace(); }
         return 0;
+    }
+
+    public int getTodayPendingAppointments() {
+        String sql = "SELECT COUNT(*) FROM appointments WHERE appointment_date = CURDATE() AND status <> 'Completed'";
+        try (Connection conn = DBConnection.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) { e.printStackTrace(); }
+        return 0;
+    }
+
+    public boolean markCompleted(int id) {
+        String sql = "UPDATE appointments SET status='Completed' WHERE id=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("appointments");
+            return ok;
+        } catch (SQLException e) {
+            System.err.println("Complete appointment error: " + e.getMessage());
+            return false;
+        }
     }
 
     private Appointment mapAppointment(ResultSet rs) throws SQLException {

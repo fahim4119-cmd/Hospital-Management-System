@@ -9,6 +9,13 @@ public class DBConnection {
     private static final String USER = "root";
     private static final String PASSWORD = "fahair"; // Change to your MySQL password
     private static Connection connection = null;
+    private static final DBConnection INSTANCE = new DBConnection();
+
+    private DBConnection() {}
+
+    public static DBConnection getInstance() {
+        return INSTANCE;
+    }
 
     public static Connection getConnection() {
         try {
@@ -22,6 +29,10 @@ public class DBConnection {
             System.err.println("Database connection failed: " + e.getMessage());
         }
         return connection;
+    }
+
+    public Connection connection() {
+        return getConnection();
     }
 
     public static void closeConnection() {

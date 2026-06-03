@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class PatientDialog extends JDialog {
 
-    private JTextField nameField, ageField, phoneField, addressField, diseaseField;
+    private JTextField nameField, ageField, phoneField, addressField, diseaseField, photoField;
     private JComboBox<String> genderCombo, bloodGroupCombo;
     private boolean confirmed = false;
     private Patient patient;
@@ -45,6 +45,7 @@ public class PatientDialog extends JDialog {
         phoneField = UITheme.createTextField();
         addressField = UITheme.createTextField();
         diseaseField = UITheme.createTextField();
+        photoField = UITheme.createTextField();
 
         genderCombo = new JComboBox<>(new String[]{"Male", "Female", "Other"});
         genderCombo.setFont(UITheme.FONT_BODY);
@@ -59,6 +60,7 @@ public class PatientDialog extends JDialog {
         addRow(form, gbc, 4, "Phone *", phoneField);
         addRow(form, gbc, 5, "Address", addressField);
         addRow(form, gbc, 6, "Disease / Condition", diseaseField);
+        addRow(form, gbc, 7, "Profile Photo Path", photoField);
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         btnPanel.setBackground(Color.WHITE);
@@ -90,6 +92,7 @@ public class PatientDialog extends JDialog {
         phoneField.setText(p.getPhone());
         addressField.setText(p.getAddress());
         diseaseField.setText(p.getDisease());
+        photoField.setText(p.getPhotoPath());
         genderCombo.setSelectedItem(p.getGender());
         bloodGroupCombo.setSelectedItem(p.getBloodGroup());
     }
@@ -111,6 +114,7 @@ public class PatientDialog extends JDialog {
         patient.setPhone(phone);
         patient.setAddress(addressField.getText().trim());
         patient.setDisease(diseaseField.getText().trim());
+        patient.setPhotoPath(photoField.getText().trim());
 
         confirmed = true;
         dispose();

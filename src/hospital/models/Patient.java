@@ -9,11 +9,17 @@ public class Patient {
     private String phone;
     private String address;
     private String disease;
+    private String photoPath;
 
     public Patient() {}
 
     public Patient(int id, String name, int age, String gender, String bloodGroup,
                    String phone, String address, String disease) {
+        this(id, name, age, gender, bloodGroup, phone, address, disease, "");
+    }
+
+    public Patient(int id, String name, int age, String gender, String bloodGroup,
+                   String phone, String address, String disease, String photoPath) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -22,6 +28,7 @@ public class Patient {
         this.phone = phone;
         this.address = address;
         this.disease = disease;
+        this.photoPath = photoPath;
     }
 
     public int getId() { return id; }
@@ -40,6 +47,8 @@ public class Patient {
     public void setAddress(String address) { this.address = address; }
     public String getDisease() { return disease; }
     public void setDisease(String disease) { this.disease = disease; }
+    public String getPhotoPath() { return photoPath; }
+    public void setPhotoPath(String photoPath) { this.photoPath = photoPath; }
 
     @Override
     public String toString() { return name; }

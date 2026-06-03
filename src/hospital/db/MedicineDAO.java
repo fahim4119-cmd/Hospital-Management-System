@@ -5,7 +5,22 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicineDAO {
+public class MedicineDAO extends BaseDAO<Medicine> {
+
+    @Override
+    public List<Medicine> getAll() { return getAllMedicines(); }
+
+    @Override
+    public List<Medicine> search(String keyword) { return searchMedicines(keyword); }
+
+    @Override
+    public boolean add(Medicine entity) { return addMedicine(entity); }
+
+    @Override
+    public boolean update(Medicine entity) { return updateMedicine(entity); }
+
+    @Override
+    public boolean delete(int id) { return deleteMedicine(id); }
 
     public List<Medicine> getAllMedicines() {
         List<Medicine> list = new ArrayList<>();
@@ -46,7 +61,9 @@ public class MedicineDAO {
             ps.setInt(5, medicine.getQuantity());
             ps.setString(6, medicine.getExpiryDate());
             ps.setString(7, medicine.getDescription());
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("medicines");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Add medicine error: " + e.getMessage());
             return false;
@@ -65,7 +82,9 @@ public class MedicineDAO {
             ps.setString(6, medicine.getExpiryDate());
             ps.setString(7, medicine.getDescription());
             ps.setInt(8, medicine.getId());
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("medicines");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Update medicine error: " + e.getMessage());
             return false;
@@ -77,7 +96,9 @@ public class MedicineDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("medicines");
+            return ok;
         } catch (SQLException e) {
             System.err.println("Delete medicine error: " + e.getMessage());
             return false;
@@ -92,6 +113,34 @@ public class MedicineDAO {
             if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) { e.printStackTrace(); }
         return 0;
+    }
+
+    public List<Medicine> getLowStockMedicines() {
+        List<Medicine> list = new ArrayList<>();
+        String sql = "SELECT * FROM medicines WHERE quantity < 10 ORDER BY quantity ASC";
+        try (Connection conn = DBConnection.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) list.add(mapMedicine(rs));
+        } catch (SQLException e) {
+            System.err.println("Low stock error: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public boolean adjustStock(int id, int delta) {
+        String sql = "UPDATE medicines SET quantity = GREATEST(quantity + ?, 0) WHERE id=?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, delta);
+            ps.setInt(2, id);
+            boolean ok = ps.executeUpdate() > 0;
+            if (ok) notifyChanged("medicines");
+            return ok;
+        } catch (SQLException e) {
+            System.err.println("Adjust stock error: " + e.getMessage());
+            return false;
+        }
     }
 
     private Medicine mapMedicine(ResultSet rs) throws SQLException {

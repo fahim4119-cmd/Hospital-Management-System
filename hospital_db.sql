@@ -15,8 +15,11 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100),
+    role VARCHAR(20) DEFAULT 'Admin',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'Admin';
 
 -- ============================================================
 -- Table: doctors
@@ -45,8 +48,11 @@ CREATE TABLE IF NOT EXISTS patients (
     phone VARCHAR(20),
     address VARCHAR(200),
     disease VARCHAR(200),
+    photo_path VARCHAR(300),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE patients ADD COLUMN IF NOT EXISTS photo_path VARCHAR(300);
 
 -- ============================================================
 -- Table: appointments
@@ -80,12 +86,73 @@ CREATE TABLE IF NOT EXISTS medicines (
 );
 
 -- ============================================================
+-- Table: billing
+-- ============================================================
+CREATE TABLE IF NOT EXISTS bills (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT NOT NULL,
+    doctor_id INT NOT NULL,
+    total_amount DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS bill_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bill_id INT NOT NULL,
+    medicine_id INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    subtotal DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (bill_id) REFERENCES bills(id) ON DELETE CASCADE,
+    FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- Table: rooms and admissions
+-- ============================================================
+CREATE TABLE IF NOT EXISTS rooms (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room_number VARCHAR(20) UNIQUE NOT NULL,
+    room_type VARCHAR(20) NOT NULL,
+    floor INT DEFAULT 1,
+    status VARCHAR(20) DEFAULT 'Available'
+);
+
+CREATE TABLE IF NOT EXISTS admissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT NOT NULL,
+    room_id INT NOT NULL,
+    admission_date DATE NOT NULL,
+    discharge_date DATE,
+    notes TEXT,
+    FOREIGN KEY (patient_id) REFERENCES patients(id) ON DELETE CASCADE,
+    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- Table: staff
+-- ============================================================
+CREATE TABLE IF NOT EXISTS staff (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    role VARCHAR(40),
+    department VARCHAR(80),
+    phone VARCHAR(20),
+    shift VARCHAR(20),
+    salary DECIMAL(10, 2) DEFAULT 0.00
+);
+
+-- ============================================================
 -- Demo Data
 -- ============================================================
 
 -- Default admin user (username: admin, password: admin123)
-INSERT INTO users (username, password, full_name, email) VALUES
-('admin', 'admin123', 'System Administrator', 'admin@hospital.com');
+INSERT INTO users (username, password, full_name, email, role) VALUES
+('admin', 'admin123', 'System Administrator', 'admin@hospital.com', 'Admin'),
+('doctor', 'doctor123', 'Dr. Portal User', 'doctor@hospital.com', 'Doctor'),
+('reception', 'reception123', 'Front Desk User', 'reception@hospital.com', 'Receptionist');
 
 -- Sample doctors
 INSERT INTO doctors (name, specialization, phone, email, qualification, gender, experience) VALUES
@@ -127,6 +194,17 @@ INSERT INTO medicines (name, category, manufacturer, price, quantity, expiry_dat
 ('Brufen 400mg', 'Analgesic', 'Abbott', 35.00, 600, '2027-06-30', 'Anti-inflammatory and pain relief'),
 ('Vitamin C 500mg', 'Supplement/Vitamin', 'Pharmatec', 80.00, 1000, '2027-12-31', 'Immune system support'),
 ('Atorvastatin 10mg', 'Cardiovascular', 'ICI Pakistan', 95.00, 250, '2026-11-30', 'Cholesterol lowering medicine');
+
+INSERT INTO rooms (room_number, room_type, floor, status) VALUES
+('101', 'General', 1, 'Available'),
+('102', 'General', 1, 'Available'),
+('201', 'Private', 2, 'Available'),
+('ICU-1', 'ICU', 1, 'Available');
+
+INSERT INTO staff (name, role, department, phone, shift, salary) VALUES
+('Nadia Khan', 'Nurse', 'Emergency', '0320-1111111', 'Morning', 65000),
+('Hassan Rauf', 'Receptionist', 'Front Desk', '0321-2222222', 'Evening', 52000),
+('Mariam Shah', 'Lab Technician', 'Laboratory', '0322-3333333', 'Night', 70000);
 
 -- Verification queries
 SELECT 'Users' AS TableName, COUNT(*) AS Records FROM users
